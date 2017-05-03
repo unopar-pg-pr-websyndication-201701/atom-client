@@ -1,5 +1,6 @@
-# atom-client
-Repositório para o projeto atom-client
+# rssclient
+Repositório para o projeto rss-client
+
 
 # Tecnologias
 	Laravel
@@ -12,7 +13,7 @@ Repositório para o projeto atom-client
 	05/05/2017 prazo limite de entrega
 
 # Goals
-	Cadastro de Notícias
+- Cadastro de Notícias
 		Padrão Noticias
 		tempo noticia ar
 		campos do cadastro:
