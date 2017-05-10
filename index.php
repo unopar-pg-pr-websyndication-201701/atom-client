@@ -1,122 +1,130 @@
-<?php
-$url_atual = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+<?php 
+  $url_atual = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 ?>
 
 <style type="text/css">
-    img {
-        max-width: 100%;
-    }
-    .marginTopo{
-        margin-top: 80px;
-    }
+  img {
+    max-width: 100%;
+  }
+  .marginTopo{
+    margin-top: 80px;
+  }
 </style>
 <script type="text/javascript">
 
 
-    function showResult(str) {
-        var datei = $('#datei').val();
-
-        /*if (str.length==0) {
-         document.getElementById("livesearch").innerHTML="";
-         document.getElementById("livesearch").style.border="0px";
-         return;
-         }*/
-        if (window.XMLHttpRequest) {
-            // code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp=new XMLHttpRequest();
-        } else {  // code for IE6, IE5
-            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange=function() {
-            if (this.readyState==4 && this.status==200) {
-                document.getElementById("livesearch").innerHTML=this.responseText;
-                // document.getElementById("livesearch").style.border="1px solid #A5ACB2";
-            }
-        }
-        xmlhttp.open("GET", "atom.php?q="+str+"&di="+datei,true);
-        //xmlhttp.open("POST", "exibir.php?q="+str,true);
-        xmlhttp.send();
+  function showResult(str, datapesquisa) {
+    $('body').loading({
+      message:"Carregando Conteudo..."
+    });
+    /*if (str.length==0) {
+      document.getElementById("livesearch").innerHTML="";
+      document.getElementById("livesearch").style.border="0px";
+      return;
+    }*/
+    if (window.XMLHttpRequest) {
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp = new XMLHttpRequest();
+    } else {  // code for IE6, IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
+
+    xmlhttp.open("GET", "exibir.php?q="+str+"&data="+datapesquisa,true);
+
+    //xmlhttp.open("POST", "exibir.php?q="+str,true);
+    xmlhttp.send();
+
+    xmlhttp.onreadystatechange=function() {
+      if (this.readyState==4 && this.status==200) {
+        $('body').loading('stop');
+        document.getElementById("livesearch").innerHTML=this.responseText;
+
+        //document.getElementById("date").innerHTML=this.value;
+      }else if(this.readyState==4 && this.status!=200){
+        $('body').loading('stop');
+        //window.onload = function(){
+          //$("#modal-mensagem").modal();
+        //}
+      alert('Ocorreu um erro no link do RSS !!!');
+      }
+      
+    }
+  }
 
 </script>
 
 <!DOCTYPE html>
-<html lang="pt-br">
-<style>
+<html>
+  <style>
+    .search{
+      clear: both;
+    }
     #livesearch{
-        text-align: center;
+      
     }
     img{
-        width: 150px;
-        height: 150px;
+      width: 150px;
+      height: 150px;
     }
-</style>
-<head>
+    .data{
+      width: 200px !important;
+      margin:0 0 20px 0;
+    }
+    hr{
+      margin-top: 10px !important;
+      margin-bottom: 60px !important;
+      border-top: 5px solid #eee !important;
+    }
+    body{
+      background-color: white;
+    }
+  </style>
+  <head>
     <head>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script src="jquery-3.2.1.min.js"></script>
-        <script src="masked.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="/resources/demos/style.css">
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script src="mask.js"></script>
-        <title>RSS</title>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+      <script src="jquery-3.2.1.min.js"></script>
+      <script src="jquery.loading.js"></script>
+      <link rel="stylesheet" type="text/css" href="jquery.loading.css" />
+      <script src="js/modernizr.custom.js"></script>
+      <title>Atom</title>
     </head>
-</head>
-<body>
-<div class="container">
-    <div class="col-md-12">
-        <form class="form-group" name="formulario">
-            <div class="marginTopo">
-                <label class="col-md-12 col-md-offset-3" for="url">URL da Noticia</label>
-                <div class="col-md-12 col-md-offset-3">
-                    <div class="col-md-5">
-                        <input type="text" class="form-control" size="30" id="url" "></br>
-                    </div>
-                </div>
-                <div class="col-md-12 col-md-offset-3">
-                    <div class="col-md-3">
-
-                        <label>Data Inicial:</label><input type="date" class="datepicker" id="datei" class="form-control">
-
+  </head>
+  <body>
+    <section id="busca">
+      <div class="container">
+        <form class="form-group">
+          <div class="marginTopo">
+            <div class="col-md-6 col-md-offset-3">
+              <h3>URL da notícia</h3>
+              <input type="text" class="form-control" size="30" id="url"></br>
+            </div>
+            <div class="col-md-6 col-md-offset-3">
+              <h3>Periodo</h3>
+              <input type="date" id="data" class="form-control data">
+              <button type="button" class="btn btn-primary" onclick="busca();">Buscar</button>
+            </div>
         </form>
-        <button onclick="showResult($('#url').val())">Consultar</button>
-    </div>
-</div></br>
-
-
-<div id="livesearch">
-</div>
-</div>
-</div>
-</body>
+        <div class="search">
+          <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+              <div id="livesearch">
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </body>
 </html>
 <script type="text/javascript">
-    var data;
-    $("#date").on("change", function(){
-        data = $(this).val();
-        //alert(data);
-        r = data;
-    });
-    $( function() {
-        $( ".datepicker" ).datepicker();
-    } );
-    $(document).ready(function () {
+function busca(){
 
-        $(".datepicker").inputmask({
-            mask: ["99/99/9999" ],
-            keepStatic: true
-        });
-    });
-    $('form[name=formulario]').submit(function(){
-
-        return false;
-
-    });
+  var data  = $("#data").val();
+  var url = $("#url").val();
+  showResult(url, data);
+};
 </script>
